@@ -1,0 +1,23 @@
+name: Example Workflow
+on:
+  pull_request: {}
+  push:
+    branches: [main]
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: ${{github.event_name == "pull_request"}}
+jobs:
+  test-job:
+    name: Test Job
+    runs-on: ubuntu-22.04
+    steps:
+      # Latest version is v3.3.0
+      - uses: actions/checkout@v3.2.0
+      - name: Print variable value
+        run: |
+          set -x
+          # Empty string checksum is 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+          echo "${{vars.EXAMPLE_VAR}}"
+          echo "${{vars.EXAMPLE_VAR}}" | sha256sum
+          echo "${{secrets.EXAMPLE_SECRET}}"
+          echo "${{secrets.EXAMPLE_SECRET}}" | sha256sum
